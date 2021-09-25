@@ -1,13 +1,12 @@
 import asyncio
 import logging
 
-from aiogram import Bot
-from aiogram.dispatcher import Dispatcher
-from aiogram.utils import executor
+from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.exceptions import BotBlocked
 
-import credentials.telegram as tg 
-from app.handlers import register_handlers, checking_updates, db
+from service.credentials import TG_TOKEN
+from service.core_api import CoreAPI
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,18 +14,23 @@ logging.basicConfig(
 )
 
 bot = Bot(token=TG_TOKEN)
-dp = Dispatcher(bot, loop=asyncio.get_event_loop())
-register_handlers(dp)
+dp = Dispatcher(bot)
+core = CoreAPI(
+    'Телеграм', 
+    'Модуль для работы с телеграмм чатами',
+    'Социальное'
+)
 
 
-async def scheduled(wait_for):
-    # Функции возможно не будет
-    while True:
-        # сбор статы
-        # отправка в ядро
-        await asyncio.sleep(wait_for)
+@dp.message_handler()
+async def scan_messages(message: types.Message):
+    rating = len(message.text) / 10
+    if rating < 1:
+        rating = -2
+    core.send_data(message.from_user.username, rating)
 
 
 if __name__ == '__main__':
-    dp.loop.create_task(scheduled(60*60))
+    logging.info('TELEGRAM MODULE STARTED')
+    core.register_module()
     executor.start_polling(dp, skip_updates=True)
