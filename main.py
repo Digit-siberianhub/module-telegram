@@ -31,6 +31,6 @@ async def scan_messages(message: types.Message):
 
 
 if __name__ == '__main__':
-    logging.info('TELEGRAMMM MODULE STARTED')
+    logging.info('TELEGA MODULE STARTED')
     core.register_module()
     executor.start_polling(dp, skip_updates=True)
