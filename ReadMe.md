@@ -11,7 +11,7 @@
 
 3. Перейти в папку модуля
     ```
-    cd module-github
+    cd module-telegram
     ```
 
 4. Установить [python3.9](https://www.python.org/downloads/)
